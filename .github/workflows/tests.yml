@@ -1,25 +1,25 @@
 name: Flask Tests
-   on: [push] # Trigger this workflow on every push to the repository
-   jobs:
-     build:
-       runs-on: ubuntu-latest # Run the job on a Ubuntu virtual machine
-       steps:
-         - uses: actions/checkout@v3 # Checkout the code
-         - name: Set up Python 3.9
-           uses: actions/setup-python@v4
-           with:
-             python-version: 3.9 # Specify the Python version
-         - name: Install Dependencies
-           run: |
-             python -m venv venv  # Create a virtual environment
-             source venv/bin/activate # Activate the virtual environment (Linux/macOS)
-             # venv\Scripts\activate  # Activate on Windows
-             pip install -r requirements.txt # Install dependencies
-         - name: Set up Database
-           run: |
-             source venv/bin/activate
-             python run.py  # Initialize the database (if needed)
-         - name: Run Tests
-           run: |
-             source venv/bin/activate
-             python -m unittest discover -v # Run unit tests
+on:
+  push: # Correct indentation here
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate # Linux/macOS
+          pip install -r requirements.txt
+      - name: Set up Database
+        run: |
+          source venv/bin/activate
+          python run.py # Initialize DB
+      - name: Run Tests
+        run: |
+          source venv/bin/activate
+          python -m unittest discover -v
