@@ -1,14 +1,13 @@
-
-from flask import render_template, request, redirect, url_for, session, sqlite3
-from app import app  # Import the app instance
+# app/routes.py
+from flask import render_template, request, redirect, url_for, session, Flask  #  Correct import
+import sqlite3  #  Import sqlite3 separately
+from app import app
 from functools import wraps
-
 
 def get_db_connection():
     conn = sqlite3.connect('hw13.db')
-    conn.row_factory = sqlite3.Row  #  Return rows as dictionaries
+    conn.row_factory = sqlite3.Row
     return conn
-
 
 def login_required(view):
     @wraps(view)
@@ -86,3 +85,26 @@ def student_results(student_id):
     """, (student_id,)).fetchall()
     conn.close()
     return render_template('student_results.html', student_id=student_id, results=results)
+
+@app.route('/results/add', methods=['GET', 'POST'])  #  Part VII
+@login_required
+def add_result():
+    conn = get_db_connection()
+    students = conn.execute("SELECT id, first_name, last_name FROM Students").fetchall()
+    quizzes = conn.execute("SELECT id, subject FROM Quizzes").fetchall()
+    conn.close()
+
+    if request.method == 'POST':
+        student_id = int(request.form['student_id'])
+        quiz_id = int(request.form['quiz_id'])
+        score = int(request.form['score'])
+        conn = get_db_connection()
+        try:
+            conn.execute("INSERT INTO Results (student_id, quiz_id, score) VALUES (?, ?, ?)", (student_id, quiz_id, score))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('dashboard'))
+        except sqlite3.Error as e:
+            conn.close()
+            return render_template('add_result.html', error=str(e), students=students, quizzes=quizzes)
+    return render_template('add_result.html', students=students, quizzes=quizzes)
