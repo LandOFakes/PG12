@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Quiz</title>
+</head>
+<body>
+    <h2>Add Quiz</h2>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <label for="subject">Subject:</label><br>
+        <input type="text" id="subject" name="subject" value="{{ request.form['subject'] or '' }}"><br>
+        <label for="num_questions">Number of Questions:</label><br>
+        <input type="number" id="num_questions" name="num_questions" value="{{ request.form['num_questions'] or '' }}"><br>
+        <label for="quiz_date">Quiz Date:</label><br>
+        <input type="date" id="quiz_date" name="quiz_date" value="{{ request.form['quiz_date'] or '' }}"><br><br>
+        <input type="submit" value="Add Quiz">
+    </form>
+    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+</body>
+</html>
